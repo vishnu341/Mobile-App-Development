@@ -1,0 +1,48 @@
+package com.example.fitmeappfinalllimplementationv1.data.room
+import androidx.lifecycle.LiveData
+import androidx.room.*
+import com.example.fitmeappfinalllimplementationv1.data.entity.Goals
+import kotlinx.coroutines.flow.Flow
+import java.time.LocalDate
+
+@Dao
+abstract class GoalsDao {
+
+    @Query("SELECT * FROM goals")
+    abstract fun getAllGoals(): Flow<List<Goals>>
+
+    @Query("SELECT * FROM goals")
+    abstract fun fetchAllGoals(): Goals?
+
+    @Query("SELECT * FROM goals")
+  abstract   fun getAllGoalsData(): LiveData<List<Goals>>
+
+
+    @Query("SELECT * FROM goals ORDER BY goalsId ASC")
+    abstract fun readAllData(): LiveData<List<Goals>>
+
+
+@Query("SELECT * FROM goals where goalsId=:goalsId")
+    abstract fun getGoalById(goalsId:Int): LiveData<Goals?>
+
+@Query("SELECT * FROM goals where isGoalEnabled=1")
+abstract fun getActiveGoals():Goals?
+
+
+    @Insert(onConflict = OnConflictStrategy.REPLACE)
+    abstract fun insert(goals: Goals): Long
+
+
+    @Update
+    abstract fun update(entity: Goals)
+
+    @Query("Select * FROM goals where goalsTitle=:goalsTitle")
+        abstract fun  selectGoalByTitle(goalsTitle: String): Goals?
+
+
+    @Delete
+
+    abstract fun deleteGoal(entity: Goals)
+
+
+}

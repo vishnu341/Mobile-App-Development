@@ -1,0 +1,126 @@
+package com.example.fitmeappfinalllimplementationv1.data.repository
+
+
+import android.util.Log
+import androidx.lifecycle.LiveData
+import com.example.fitmeappfinalllimplementationv1.Graph
+
+import com.example.fitmeappfinalllimplementationv1.data.entity.History
+
+
+import com.example.fitmeappfinalllimplementationv1.data.room.HistoryDao
+
+import kotlinx.coroutines.flow.Flow
+
+import java.time.LocalDate
+
+class HistoryRepository(
+    private val historyDao: HistoryDao = Graph.database.HistoryDao(),
+
+
+) {
+    fun getHistoyData(): Flow<List<History>> {
+        return historyDao.getAllHistoryItems()
+
+    }
+val today = LocalDate.now()
+    var day=today.dayOfMonth
+    var month=today.monthValue
+    var year=today.year
+
+    fun getHistoryByGoalId(goalsId:Int): History? {
+        return historyDao.getHistoryByGoalId(goalsId )
+    }
+
+    fun getGoalFromHistorybyDate() :Flow<List<History>>{
+       // val dateww=historyDao.getGoalFromHistorybyDate(today.minusDays(1))
+
+    //    Log.d("HistoryViewModel", "goalFromHistory:$dateww")
+
+        return historyDao.getGoalFromHistorybyDate(today.dayOfMonth.minus(1))
+
+    }
+
+
+
+    fun getHistoryDataForDate():History?
+    {
+        return historyDao.getHistoryDataForDate(today.dayOfMonth,today.monthValue,today.year)
+    }
+
+
+     fun updateGoalsInHistory(goalsId: Int, goalsTitle: String, isGoalEnabled: Int, targetSteps: Int, stepsCount: Int, goalsDate: Int, goalsMonth: Int, goalsYear: Int, uniqueId:String){
+
+         try{
+         return historyDao.updateGoalsInHistory(goalsId, goalsTitle, isGoalEnabled, targetSteps, stepsCount, goalsDate, goalsMonth, goalsYear, uniqueId)
+    }
+         catch(e: Exception)
+         {
+             e.printStackTrace()
+             throw RuntimeException("Error updating goals in history: ${e.message}")
+         }
+     }
+
+
+    fun update(history: History) {
+        try {
+            historyDao.update(history)
+        } catch (e: Exception) {
+            e.printStackTrace()
+            throw RuntimeException("Error updating goals in history: ${e.message}")
+        }
+    }
+    fun getTargetStepsByGoalId():Int
+    {
+        return historyDao.getTargetStepsByGoalId()
+    }
+
+    fun deleteHistoryData(history: History) {
+    try{
+        historyDao.deleteHistoryData(history)
+
+    }
+    catch(e:Exception){
+        e.printStackTrace()
+        throw RuntimeException("Error updating goals in history: ${e.message}")
+    }
+    }
+
+    private val deletedHistoryItems = mutableListOf<History>()
+
+    fun deleteByGoalsBeforeTodaysDate(): Flow<List<History>>{
+        val deletedItems = historyDao.getGoalFromHistorybyDate(today.dayOfMonth.minus(1))
+
+        historyDao.deleteByGoalsBeforeTodaysDate(today.dayOfMonth.minus(1))
+        return deletedItems
+    }
+    suspend fun insertAll(items: List<History>) {
+        historyDao.insertAll(items)
+
+    }
+   fun getHistoryDataForSpecificDate(goalsDate:Int):History?
+   {
+       return historyDao.getHistoryDataForSpecificDate(goalsDate)
+   }
+
+
+   suspend fun insertHistoryRecording(History: History) {
+       try {
+           return historyDao.insert(History)
+       }
+       catch (e: IllegalStateException) {
+
+           e.printStackTrace()
+           throw RuntimeException("Error updating goals in history: ${e.message}")
+       }
+}
+    fun getActiveGoal(): LiveData<History?>
+    {
+        return historyDao.getActiveGoal()
+
+    }
+   /* fun updateGoalsInHistory( history: History){
+        historyDao.updateGoalsInHistory()
+    }*/
+
+}

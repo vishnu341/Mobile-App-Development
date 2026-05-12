@@ -1,0 +1,18 @@
+package com.example.fitmeappfinalllimplementationv1.data.room
+
+import androidx.room.Database
+import androidx.room.RoomDatabase
+import com.example.fitmeappfinalllimplementationv1.data.entity.Goals
+import com.example.fitmeappfinalllimplementationv1.data.entity.History
+
+@Database(
+entities = [Goals::class,History::class],
+    version = 6,
+    exportSchema = false,
+
+
+)
+abstract class ApplicationDatabase: RoomDatabase() {
+abstract fun GoalsDao():GoalsDao
+abstract fun HistoryDao():HistoryDao
+}
